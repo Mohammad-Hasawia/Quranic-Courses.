@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
 import axios from "axios";
 import { NGROK_BASE_URL } from "../data/mockData";
@@ -7,6 +7,7 @@ import { AuthContext } from "../context/AuthContext"; // ✅ استيراد ال
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useContext(AuthContext); // ✅ استخدام الدالة من السياق
 
   const [role, setRole] = useState("student");
@@ -16,6 +17,13 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
+
+  // Check for success message from password reset
+  React.useEffect(() => {
+    if (location.state?.message) {
+      setResponseMessage(location.state.message);
+    }
+  }, [location.state]);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -151,7 +159,7 @@ const Login = () => {
                   </span>
                 </label>
                 <Link
-                  to="/reset-password"
+                  to="/forgot-password-email"
                   className="font-cairo text-sm text-islamic-primary hover:text-islamic-light"
                 >
                   نسيت كلمة المرور؟
@@ -168,7 +176,9 @@ const Login = () => {
             </form>
 
             {responseMessage && (
-              <p className="mt-4 text-center text-red-600 font-bold">
+              <p className={`mt-4 text-center font-bold ${
+                responseMessage.includes('بنجاح') ? 'text-green-600' : 'text-red-600'
+              }`}>
                 {responseMessage}
               </p>
             )}

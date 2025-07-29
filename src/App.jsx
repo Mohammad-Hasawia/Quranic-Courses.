@@ -19,6 +19,9 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ResetPassword from "./pages/ResetPassword";
 import ResetPasswordForm from "./pages/ResetPasswordForm";
+import ForgotPasswordEmail from "./pages/ForgotPasswordEmail";
+import VerifyOTP from "./pages/VerifyOTP";
+import ResetPasswordNew from "./pages/ResetPasswordNew";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {
@@ -45,6 +48,9 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/reset-password/:token" element={<ResetPasswordForm />} />
+              <Route path="/forgot-password-email" element={<ForgotPasswordEmail />} />
+              <Route path="/verify-otp" element={<VerifyOTP />} />
+              <Route path="/reset-password-new" element={<ResetPasswordNew />} />
               <Route path="/signup" element={<Signup />} />
             </Routes>
           </main>

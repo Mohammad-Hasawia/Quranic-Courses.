@@ -3,10 +3,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, User, LogOut } from "lucide-react";
 import { AuthContext } from "@/context/AuthContext";
 import { getInstructors, getStudents } from "@/data/mockData";
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const [showShadow, setShowShadow] = useState(false);
+  const [userFullName, setUserFullName] = useState("");
   const lastScrollY = useRef(0);
 
   const location = useLocation();
@@ -14,6 +16,34 @@ const Header = () => {
   const isHomePage = location.pathname === "/";
 
   const { isLoggedIn, userRole, userEmail, logout } = useContext(AuthContext);
+
+  // Fetch user's full name based on role and email
+  useEffect(() => {
+    const fetchUserName = async () => {
+      if (!isLoggedIn || !userEmail || !userRole) return;
+
+      try {
+        if (userRole === "teacher") {
+          const instructors = await getInstructors();
+          const currentUser = instructors.find(inst => inst.email === userEmail);
+          if (currentUser) {
+            setUserFullName(`${currentUser.name} - مدرس`);
+          }
+        } else if (userRole === "student") {
+          const students = await getStudents();
+          const currentUser = students.find(student => student.email === userEmail);
+          if (currentUser) {
+            setUserFullName(`${currentUser.name} - طالب`);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user name:", error);
+        setUserFullName("المستخدم");
+      }
+    };
+
+    fetchUserName();
+  }, [isLoggedIn, userEmail, userRole]);
 
   // تحديد عناصر التنقل بناءً على حالة تسجيل الدخول
   const getNavItems = () => {
@@ -144,7 +174,7 @@ const handleMyAccountClick = async () => {
                   className="flex items-center space-x-2 rtl:space-x-reverse text-white hover:text-islamic-golden transition-colors"
                 >
                   <User size={20} />
-                  <span className="font-cairo">حسابي</span>
+                  <span className="font-cairo">{userFullName || "حسابي"}</span>
                 </button>
                 <button
                   onClick={handleLogout}
@@ -206,7 +236,7 @@ const handleMyAccountClick = async () => {
                     }}
                     className="block py-2 px-4 text-gray-700 hover:text-islamic-primary font-cairo"
                   >
-                    حسابي
+                    {userFullName || "حسابي"}
                   </button>
                   <button
                     onClick={() => {
