@@ -1106,7 +1106,7 @@ export const topics = [
     description: "دراسة سيرة النبي محمد صلى الله عليه وسلم",
   },
 ];
-export const NGROK_BASE_URL = 'https://d1c06b80ac8c.ngrok-free.app/api/v1';
+export const NGROK_BASE_URL = 'https://33cabe8093d8.ngrok-free.app/api/v1';
 
 // src/api/getInstructors.js
 import axios from "axios";
@@ -1256,6 +1256,33 @@ export const getRecitationsByCourseId = async (courseId) => {
 
   } catch (error) {
     console.error("Error fetching recitations by course:", error);
+    return [];
+  }
+};
+export const getExams = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(`${NGROK_BASE_URL}/stdExam`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+
+    console.log("Exams fetched:", res.data);
+
+    if (Array.isArray(res.data)) {
+      return res.data;
+    } else if (Array.isArray(res.data.exams)) {
+      return res.data.exams;
+    } else {
+      console.error("Unexpected exams data structure:", res.data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching exams:", error);
     return [];
   }
 };
